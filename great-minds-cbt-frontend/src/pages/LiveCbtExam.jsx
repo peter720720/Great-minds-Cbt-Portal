@@ -68,7 +68,7 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
     const seconds = String(secondsRemaining % 60).padStart(2, '0');
 
     return (
-        <div className="max-w-2xl mx-auto py-8 px-4">
+        <div className="w-full max-w-3xl mx-auto py-8 px-4">
             <div className="sticky top-0 z-10 bg-[#0B192C] text-white rounded shadow-md border-t-4 border-[#E1A95F] p-3 mb-4 flex justify-between items-center">
                 <div>
                     <p className="font-extrabold text-xs uppercase">{exam.title}</p>
@@ -89,13 +89,13 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
                         <div className="space-y-5 mt-6">
                             {(() => {
                                 const question = exam.questions[currentQuestion];
-                                return <div key={question._id} className="text-xs bg-slate-50/60 p-4 rounded border border-gray-100">
+                                return <div key={question._id} className="w-full text-xs bg-slate-50/60 p-5 rounded border border-gray-100">
                                     <p className="font-bold text-gray-800 mb-3">{currentQuestion + 1}. {question.questionText}</p>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <div className="grid grid-cols-2 gap-3">
                                         {question.options.map((opt, optIdx) => (
                                             <label 
                                                 key={optIdx}
-                                                className={`p-2.5 rounded border cursor-pointer flex items-center gap-2 transition text-[11px] font-medium ${selectedAnswers[currentQuestion] === optIdx ? 'bg-amber-50 border-[#E1A95F] text-[#0B192C] font-bold' : 'bg-white hover:bg-gray-50'}`}
+                                                className={`w-full min-h-16 p-4 rounded border cursor-pointer flex items-center gap-3 transition text-sm font-medium ${selectedAnswers[currentQuestion] === optIdx ? 'bg-amber-50 border-[#E1A95F] text-[#0B192C] font-bold' : 'bg-white hover:bg-gray-50'}`}
                                             >
                                                 <input 
                                                     type="radio" 
