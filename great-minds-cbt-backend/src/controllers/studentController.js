@@ -28,7 +28,13 @@ exports.loginStudent = async (req, res) => {
         let student = await Student.findOne({ studentId });
 
         if (!student && isSharedPassword) {
-            student = await Student.create({ studentId, password: await bcrypt.hash(password, 12), academicClass: 'All Students' });
+            const portalEmail = `portal-${studentId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}@cbt.local`;
+            student = await Student.create({
+                studentId,
+                email: portalEmail,
+                password: await bcrypt.hash(password, 12),
+                academicClass: 'All Students'
+            });
         }
         if (!student) return res.status(404).json({ message: 'Invalid Student ID or CBT password.' });
 
