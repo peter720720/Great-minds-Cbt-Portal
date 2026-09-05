@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const connectCbtDB = require('./src/config/db');
+const { connectSchoolPortalDB } = require('./src/config/schoolPortalDb');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // Initialize MongoDB Connection Pool
 connectCbtDB();
+connectSchoolPortalDB();
 
 // API Mounted Endpoints Route Blocks
 app.use('/api/student', require('./src/routes/studentRoutes'));

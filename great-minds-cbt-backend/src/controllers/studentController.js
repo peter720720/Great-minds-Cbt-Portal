@@ -2,6 +2,7 @@ const Student = require('../models/Student');
 const CbtAccess = require('../models/CbtAccess');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { getApplicantModel } = require('../config/schoolPortalDb');
 
 exports.registerStudent = async (req, res) => {
     try {
@@ -27,14 +28,27 @@ exports.loginStudent = async (req, res) => {
         const isSharedPassword = sharedAccess && await bcrypt.compare(password, sharedAccess.passwordHash);
         let student = await Student.findOne({ studentId });
 
-        if (!student && isSharedPassword) {
-            const portalEmail = `portal-${studentId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}@cbt.local`;
-            student = await Student.create({
-                studentId,
-                email: portalEmail,
+        if (isSharedPassword) {
+            const Applicant = getApplicantModel();
+            if (!Applicant) return res.status(503).json({ message: 'School portal profile service is not configured.' });
+
+            const applicant = await Applicant.findOne({ studentId }).lean();
+            if (!applicant) return res.status(404).json({ message: 'Student ID was not found in the school portal.' });
+
+            const profile = {
+                fullName: applicant.fullName || 'Portal Student',
+                email: applicant.email,
+                profilePicture: applicant.profilePicture || '',
+                academicClass: applicant.classApplied || 'All Students',
                 password: await bcrypt.hash(password, 12),
-                academicClass: 'All Students'
-            });
+            };
+
+            if (student) {
+                Object.assign(student, profile);
+                await student.save();
+            } else {
+                student = await Student.create({ studentId, ...profile });
+            }
         }
         if (!student) return res.status(404).json({ message: 'Invalid Student ID or CBT password.' });
 
