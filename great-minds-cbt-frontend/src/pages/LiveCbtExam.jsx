@@ -9,6 +9,7 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
     const [scoreMetric, setScoreMetric] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const [secondsRemaining, setSecondsRemaining] = useState(exam.durationMinutes * 60);
+    const [currentQuestion, setCurrentQuestion] = useState(0);
     const selectedAnswersRef = useRef(selectedAnswers);
 
     const handleAnswerSelect = (qIndex, optIndex) => {
@@ -68,6 +69,13 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
 
     return (
         <div className="max-w-2xl mx-auto py-8 px-4">
+            <div className="sticky top-0 z-10 bg-[#0B192C] text-white rounded shadow-md border-t-4 border-[#E1A95F] p-3 mb-4 flex justify-between items-center">
+                <div>
+                    <p className="font-extrabold text-xs uppercase">{exam.title}</p>
+                    <p className="text-[10px] text-gray-300 uppercase tracking-wider">Question {currentQuestion + 1} of {exam.questions.length}</p>
+                </div>
+                <span className="font-mono text-sm font-bold">{minutes}:{seconds} remaining</span>
+            </div>
             <div className="bg-white rounded shadow-md border-t-4 border-[#E1A95F] p-6">
                 {!finished ? (
                     <>
@@ -76,26 +84,24 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
                                 <h3 className="font-extrabold text-sm uppercase text-[#0B192C]">{exam.title}</h3>
                                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Subject Track: {exam.subject}</p>
                             </div>
-                            <span className="bg-[#0B192C] text-white font-mono text-xs px-2.5 py-1 rounded shadow">
-                                {minutes}:{seconds} Mins Remaining
-                            </span>
                         </div>
 
                         <div className="space-y-5 mt-6">
-                            {exam.questions.map((q, qIdx) => (
-                                <div key={q._id} className="text-xs bg-slate-50/60 p-4 rounded border border-gray-100">
-                                    <p className="font-bold text-gray-800 mb-3">{qIdx + 1}. {q.questionText}</p>
+                            {(() => {
+                                const question = exam.questions[currentQuestion];
+                                return <div key={question._id} className="text-xs bg-slate-50/60 p-4 rounded border border-gray-100">
+                                    <p className="font-bold text-gray-800 mb-3">{currentQuestion + 1}. {question.questionText}</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                        {q.options.map((opt, optIdx) => (
+                                        {question.options.map((opt, optIdx) => (
                                             <label 
-                                                key={optIdx} 
-                                                className={`p-2.5 rounded border cursor-pointer flex items-center gap-2 transition text-[11px] font-medium ${selectedAnswers[qIdx] === optIdx ? 'bg-amber-50 border-[#E1A95F] text-[#0B192C] font-bold' : 'bg-white hover:bg-gray-50'}`}
+                                                key={optIdx}
+                                                className={`p-2.5 rounded border cursor-pointer flex items-center gap-2 transition text-[11px] font-medium ${selectedAnswers[currentQuestion] === optIdx ? 'bg-amber-50 border-[#E1A95F] text-[#0B192C] font-bold' : 'bg-white hover:bg-gray-50'}`}
                                             >
                                                 <input 
                                                     type="radio" 
-                                                    name={`question-${qIdx}`} 
-                                                    checked={selectedAnswers[qIdx] === optIdx} 
-                                                    onChange={() => handleAnswerSelect(qIdx, optIdx)} 
+                                                    name={`question-${currentQuestion}`}
+                                                    checked={selectedAnswers[currentQuestion] === optIdx}
+                                                    onChange={() => handleAnswerSelect(currentQuestion, optIdx)}
                                                     className="accent-[#0B192C]" 
                                                 />
                                                 {opt}
@@ -103,16 +109,17 @@ export default function LiveCbtExam({ exam, student, token, onExamClose }) {
                                         ))}
                                     </div>
                                 </div>
-                            ))}
+                            })()}
                         </div>
 
-                        <button 
-                            onClick={handleExamSubmission} 
-                            disabled={submitting}
-                            className="mt-8 w-full bg-[#0B192C] text-white text-xs font-bold uppercase py-3.5 rounded tracking-wider shadow hover:bg-slate-800 disabled:bg-gray-300"
-                        >
-                            {submitting ? 'Transmitting Assessment Metrics...' : 'Finalize & Submit Scorecard'}
-                        </button>
+                        <div className="mt-8 flex justify-between gap-3">
+                            <button type="button" onClick={() => setCurrentQuestion((current) => Math.max(0, current - 1))} disabled={currentQuestion === 0 || submitting} className="bg-gray-200 text-gray-700 text-xs font-bold uppercase px-5 py-3 rounded disabled:opacity-40">Previous</button>
+                            {currentQuestion < exam.questions.length - 1 ? (
+                                <button type="button" onClick={() => setCurrentQuestion((current) => Math.min(exam.questions.length - 1, current + 1))} disabled={submitting} className="bg-[#0B192C] text-white text-xs font-bold uppercase px-5 py-3 rounded shadow disabled:bg-gray-300">Next</button>
+                            ) : (
+                                <button type="button" onClick={() => handleExamSubmission()} disabled={submitting} className="bg-[#0B192C] text-white text-xs font-bold uppercase px-5 py-3 rounded shadow disabled:bg-gray-300">{submitting ? 'Submitting...' : 'Submit exam'}</button>
+                            )}
+                        </div>
                     </>
                 ) : (
                     <div className="text-center py-8">
