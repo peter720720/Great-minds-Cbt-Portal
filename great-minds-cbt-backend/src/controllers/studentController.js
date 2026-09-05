@@ -54,6 +54,8 @@ exports.loginStudent = async (req, res) => {
                 fullName: student.fullName, 
                 studentId: student.studentId, 
                 academicClass: student.academicClass, 
+                email: student.email,
+                profilePicture: student.profilePicture,
                 feesPaid: student.feesPaid 
             } 
         });

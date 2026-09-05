@@ -4,6 +4,7 @@ const StudentSchema = new mongoose.Schema({
     studentId: { type: String, required: true, unique: true },
     fullName: { type: String, default: 'Portal Student' },
     email: { type: String, unique: true, sparse: true },
+    profilePicture: { type: String, default: '' },
     password: { type: String, required: true },
     academicClass: { 
         type: String, 

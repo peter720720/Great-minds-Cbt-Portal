@@ -2,11 +2,13 @@ import React from 'react';
 import { LogOut, GraduationCap, Award } from 'lucide-react';
 
 export default function CbtNavbar({ student, onLogout }) {
+    const initials = student.fullName?.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase() || 'GM';
+
     return (
         <header className="bg-[#0B192C] text-white px-6 py-4 flex justify-between items-center shadow-md border-b-2 border-[#E1A95F]">
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#E1A95F] text-[#0B192C] font-black flex items-center justify-center border-2 border-white shadow">
-                    GM
+                <div className="w-9 h-9 rounded-full bg-[#E1A95F] text-[#0B192C] font-black flex items-center justify-center border-2 border-white shadow overflow-hidden">
+                    {student.profilePicture ? <img src={student.profilePicture} alt={student.fullName} className="w-full h-full object-cover" /> : initials}
                 </div>
                 <div>
                     <h1 className="font-extrabold text-xs md:text-sm tracking-wide uppercase flex items-center gap-1.5">

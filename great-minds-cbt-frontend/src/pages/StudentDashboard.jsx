@@ -35,6 +35,17 @@ export default function StudentDashboard({ student, token, onStartExam }) {
 
             {/* Core Display Console */}
             <main className="flex-grow p-6">
+                <section className="bg-white border border-slate-200 rounded shadow-sm p-5 mb-6 flex flex-wrap items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-[#E1A95F] text-[#0B192C] font-black text-lg flex items-center justify-center overflow-hidden border-2 border-white shadow">
+                        {student.profilePicture ? <img src={student.profilePicture} alt={student.fullName} className="w-full h-full object-cover" /> : student.fullName?.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-2 text-xs flex-1">
+                        <div><p className="text-[10px] uppercase font-bold text-gray-400">Full name</p><p className="font-bold text-[#0B192C]">{student.fullName}</p></div>
+                        <div><p className="text-[10px] uppercase font-bold text-gray-400">Student ID</p><p className="font-bold text-[#0B192C]">{student.studentId}</p></div>
+                        <div><p className="text-[10px] uppercase font-bold text-gray-400">Class</p><p className="font-bold text-[#0B192C]">{student.academicClass}</p></div>
+                        <div><p className="text-[10px] uppercase font-bold text-gray-400">Email</p><p className="font-bold text-[#0B192C] break-all">{student.email || 'Not available'}</p></div>
+                    </div>
+                </section>
                 {currentTab === 'assignments' && (
                     <div className="bg-white p-6 rounded shadow border border-gray-200 max-w-xl">
                         <h3 className="font-bold text-sm uppercase text-[#0B192C] mb-2">Class Assignments Desk</h3>
